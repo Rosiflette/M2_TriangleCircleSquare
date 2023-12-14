@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Emgu.CV;
 
 public class GameManager : MonoBehaviour
 {
@@ -20,6 +21,9 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Mat img = new Mat("C:\\Users\\rchapelle\\Pictures\\Totoro3.jpg");
+        Debug.Log(img.Size);
+
         if (Instance == null) Instance = this;
 
         float third = Screen.width/ shapes.Count;
