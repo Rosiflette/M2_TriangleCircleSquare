@@ -15,4 +15,9 @@ public class ShapeController : MonoBehaviour
     {
         gameObject.transform.position += Vector3.down * Time.deltaTime * GameManager.Instance.speed;
     }
+
+    private void OnTriggerEnter(Collider collision)
+    {
+        Destroy(gameObject);
+    }
 }
