@@ -548,9 +548,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 543210a931dfe9b48b90d03429fcc9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cannyThreshold: 156
-  circleAccumulatorThreshold: 170
-  minContourArea: 50
+  contourThreshold: 5
+  erode: 9
+  dilate: 8
 --- !u!114 &613746213
 MonoBehaviour:
   m_ObjectHideFlags: 0
