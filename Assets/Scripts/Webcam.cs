@@ -108,6 +108,7 @@ public class Webcam : MonoBehaviour
             }
         }
 
+        GameManager.Instance.UpdateShapeCount(circle, square, triangle);
         //print($"circles : {circle}, squares : {square}, triangles : {triangle}");
 
         return currentFrame;

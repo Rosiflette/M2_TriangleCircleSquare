@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private List<GameObject> shapes;
     [SerializeField] private List<GameObject> spawnZones;
+    [SerializeField] private List<GameObject> doors;
     [SerializeField] public float speed;
     [SerializeField] private float spawnTime;
     private float t;
@@ -42,8 +43,12 @@ public class GameManager : MonoBehaviour
             Instantiate(shapes[randomShapeIndex], spawnZones[randomShapeIndex].transform);
             t = 0;
         }
-
-
     }
 
+    public void UpdateShapeCount(int circle, int square, int triangle)
+    {
+        doors[0].SetActive(circle > 0);
+        doors[1].SetActive(square > 0);
+        doors[2].SetActive(triangle > 0);
+    }
 }

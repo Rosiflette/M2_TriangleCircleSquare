@@ -202,7 +202,7 @@ GameObject:
   - component: {fileID: 43553441}
   - component: {fileID: 43553442}
   m_Layer: 5
-  m_Name: HorizontalLayout (1)
+  m_Name: DoorHorizontalLayout
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -637,6 +637,10 @@ MonoBehaviour:
   - {fileID: 1462250431}
   - {fileID: 1055640349}
   - {fileID: 419741455}
+  doors:
+  - {fileID: 1239763315}
+  - {fileID: 1080841463}
+  - {fileID: 1149137290}
   speed: 10
   spawnTime: 1
 --- !u!4 &587053628
@@ -668,7 +672,7 @@ GameObject:
   - component: {fileID: 613746212}
   - component: {fileID: 613746213}
   m_Layer: 5
-  m_Name: WebcamCapture
+  m_Name: WebcamCaptureColorized
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1552,7 +1556,7 @@ GameObject:
   - component: {fileID: 1724676365}
   - component: {fileID: 1724676363}
   m_Layer: 5
-  m_Name: WebcamCapture (2)
+  m_Name: WebcamCaptureGray
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1637,7 +1641,7 @@ GameObject:
   - component: {fileID: 1947087023}
   - component: {fileID: 1947087024}
   m_Layer: 5
-  m_Name: HorizontalLayout
+  m_Name: ShapeHorizontalLayout
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
