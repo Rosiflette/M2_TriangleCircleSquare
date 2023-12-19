@@ -1197,8 +1197,8 @@ MonoBehaviour:
   - {fileID: 1239763315}
   - {fileID: 1080841463}
   - {fileID: 1149137290}
-  speed: 10
-  spawnTime: 1
+  speed: 9
+  spawnTime: 1.5
   canva: {fileID: 1085220088}
   timePassed: 0
   isGameEnded: 0
@@ -1304,11 +1304,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 543210a931dfe9b48b90d03429fcc9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minContourThreshold: 5000
-  maxContourThreshold: 10000
-  erode: 0
-  dilate: 4
+  minContourThreshold: 4000
+  maxContourThreshold: 200000000
+  erode: 2
+  dilate: 5
   otherImage: {fileID: 1724676365}
+  maskShown: aaaaa
 --- !u!114 &613746213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1661,6 +1662,7 @@ MonoBehaviour:
   erode: 9
   dilate: 8
   otherImage: {fileID: 0}
+  maskShown: 
 --- !u!114 &916680692
 MonoBehaviour:
   m_ObjectHideFlags: 0

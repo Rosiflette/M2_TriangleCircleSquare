@@ -17,6 +17,8 @@ public class Webcam : MonoBehaviour
     Mat frame;
     Texture2D tColorized, tGray;
 
+    public string maskShown;
+
     RawImage webcamScreen;
 
     void Start()
@@ -55,62 +57,119 @@ public class Webcam : MonoBehaviour
         }
     }
 
+    Image<Gray, byte> ColorDetection(Mat frame, Bgr lower, Bgr higher)
+    {
+        return frame.ToImage<Bgr, byte>().InRange(lower, higher);
+    }
+
     Mat ShapeDetection(Mat frame)
     {
-        Image<Gray, byte> temp = frame.ToImage<Gray, byte>().ThresholdBinaryInv(new Gray(125), new Gray(255));
-        temp._Erode(erode);
-        temp._Dilate(dilate);
-        Mat currentFrame = temp.Convert<Bgr, byte>().Mat.Clone();
-        //Mat currentFrame = frame.Clone();
+        Bgr lower = new Bgr(100, 0, 0);
+        Bgr higher = new Bgr(255, 100, 100);
+        var maskBlue = ColorDetection(frame, lower, higher);
+        maskBlue._Erode(erode);
+        maskBlue._Dilate(dilate);
 
-        VectorOfVectorOfPoint contours = new();
-        Mat m = new();
+        lower = new Bgr(0, 80, 0);
+        higher = new Bgr(80, 255, 80);
+        var maskGreen = ColorDetection(frame, lower, higher);
+        maskGreen._Erode(erode);
+        maskGreen._Dilate(dilate);
 
-        CvInvoke.FindContours(temp, contours, m, Emgu.CV.CvEnum.RetrType.External, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
+        lower = new Bgr(0, 0, 125);
+        higher = new Bgr(80, 100, 255);
+        var maskRed = ColorDetection(frame, lower, higher);
+        maskRed._Erode(erode);
+        maskRed._Dilate(dilate);
 
-        int square = 0;
-        int circle = 0;
-        int triangle = 0;
 
-        for (int i = 0; i < contours.Size; i++)
+        Dictionary<string, Image<Gray, byte>> masks = new();
+        masks.Add("Blue", maskBlue);
+        masks.Add("Green", maskGreen);
+        masks.Add("Red", maskRed);
+
+        Dictionary<string, int> results = new();
+        Mat currentFrame = (maskBlue + maskGreen + maskRed).Convert<Bgr, byte>().Mat;
+
+        foreach (var item in masks)
         {
-            double perimeter = CvInvoke.ArcLength(contours[i], true);
-            VectorOfPoint approx = new();
-            CvInvoke.ApproxPolyDP(contours[i], approx, 0.04 * perimeter, true);
+            var temp = item.Value;
+            VectorOfVectorOfPoint contours = new();
+            Mat m = new();
 
-            if (CvInvoke.ContourArea(contours[i]) > minContourThreshold &&
-                CvInvoke.ContourArea(contours[i]) < maxContourThreshold)
+            CvInvoke.FindContours(temp, contours, m, Emgu.CV.CvEnum.RetrType.External, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
+
+            for (int i = 0; i < contours.Size; i++)
             {
-                CvInvoke.DrawContours(currentFrame, contours, i, new MCvScalar(0, 0, 255));
+                double perimeter = CvInvoke.ArcLength(contours[i], true);
+                VectorOfPoint approx = new();
+                CvInvoke.ApproxPolyDP(contours[i], approx, 0.04 * perimeter, true);
 
-                var moments = CvInvoke.Moments(contours[i]);
-                int x = (int)(moments.M10 / moments.M00);
-                int y = (int)(moments.M01 / moments.M00);
+                if (CvInvoke.ContourArea(contours[i]) > minContourThreshold &&
+                    CvInvoke.ContourArea(contours[i]) < maxContourThreshold)
+                {
+                    CvInvoke.DrawContours(currentFrame, contours, i, new MCvScalar(0, 0, 255));
 
-                if (approx.Size == 3)
-                {
-                    triangle++;
-                    CvInvoke.PutText(currentFrame, "Triangle", new Point(x, y),
-                        Emgu.CV.CvEnum.FontFace.HersheySimplex, 0.5, new MCvScalar(0, 0, 255), 2);
-                }
-                else if (approx.Size == 4)
-                {
-                    square++;
-                    CvInvoke.PutText(currentFrame, "Rectangle", new Point(x, y),
-                        Emgu.CV.CvEnum.FontFace.HersheySimplex, 0.5, new MCvScalar(0, 0, 255), 2);
-                }
-                else if (approx.Size > 4)
-                {
-                    circle++;
-                    CvInvoke.PutText(currentFrame, "Circle", new Point(x, y),
-                        Emgu.CV.CvEnum.FontFace.HersheySimplex, 0.5, new MCvScalar(0, 0, 255), 2);
+                    var moments = CvInvoke.Moments(contours[i]);
+                    int x = (int)(moments.M10 / moments.M00);
+                    int y = (int)(moments.M01 / moments.M00);
+
+                    string keyName = item.Key;
+                    if (approx.Size == 3)
+                    {
+                        keyName += "Triangle";
+                        if (results.ContainsKey(keyName))
+                        {
+                            results[keyName]++;
+                        }
+                        else
+                        {
+                            results.Add(keyName, 1);
+                        }
+                        CvInvoke.PutText(currentFrame, "Triangle", new Point(x, y),
+                            Emgu.CV.CvEnum.FontFace.HersheySimplex, 0.5, new MCvScalar(0, 0, 255), 2);
+                    }
+                    else if (approx.Size == 4)
+                    {
+                        keyName += "Rectangle";
+                        if (results.ContainsKey(keyName))
+                        {
+                            results[keyName]++;
+                        }
+                        else
+                        {
+                            results.Add(keyName, 1);
+                        }
+                        CvInvoke.PutText(currentFrame, "Rectangle", new Point(x, y),
+                            Emgu.CV.CvEnum.FontFace.HersheySimplex, 0.5, new MCvScalar(0, 0, 255), 2);
+                    }
+                    else if (approx.Size > 4)
+                    {
+                        keyName += "Circle";
+                        if (results.ContainsKey(keyName))
+                        {
+                            results[keyName]++;
+                        }
+                        else
+                        {
+                            results.Add(keyName, 1);
+                        }
+                        CvInvoke.PutText(currentFrame, "Circle", new Point(x, y),
+                            Emgu.CV.CvEnum.FontFace.HersheySimplex, 0.5, new MCvScalar(0, 0, 255), 2);
+                    }
                 }
             }
+
         }
 
-        GameManager.Instance.UpdateShapeCount(circle, square, triangle);
-        //print($"circles : {circle}, squares : {square}, triangles : {triangle}");
+        GameManager.Instance.UpdateShapeCount(
+            results.GetValueOrDefault("RedCircle"), 
+            results.GetValueOrDefault("BlueRectangle"),
+            results.GetValueOrDefault("GreenTriangle")
+        );
 
+        if (masks.TryGetValue(maskShown, out var value))
+            return value.Mat;
         return currentFrame;
     }
 

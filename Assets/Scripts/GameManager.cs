@@ -57,6 +57,7 @@ public class GameManager : MonoBehaviour
 
     public void UpdateShapeCount(int circle, int square, int triangle)
     {
+        print($"Circle: {circle}, Rectangle: {square}, Triangle: {triangle}");
         doors[0].SetActive(circle > 0);
         doors[1].SetActive(square > 0);
         doors[2].SetActive(triangle > 0);
