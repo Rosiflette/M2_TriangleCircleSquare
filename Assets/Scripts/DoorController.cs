@@ -26,4 +26,10 @@ public class DoorController : MonoBehaviour
             box.size = new Vector3(rect.rect.width, rect.rect.height / 2, 1);
         }
     }
+
+
+    void OnTriggerEnter(Collider other)
+    {
+        GameManager.Instance.life -= 1;
+    }
 }

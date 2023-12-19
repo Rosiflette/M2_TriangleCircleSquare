@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Emgu.CV;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,9 +14,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private List<GameObject> doors;
     [SerializeField] public float speed;
     [SerializeField] private float spawnTime;
+    [SerializeField] private GameObject canva;
     private float t;
     private List<Vector3> startingPoints;
-
+    public float timePassed = 0;
+    public bool isGameEnded = false;
+    public int life;
 
     public static GameManager Instance;
 
@@ -30,13 +34,19 @@ public class GameManager : MonoBehaviour
         startingPoints.Add(Vector3.zero * third);
         startingPoints.Add(Vector3.right * third);
         t = 0;
+        life = 3;
 
     }
 
     // Update is called once per frame
     void Update()
     {
+        timePassed += Time.deltaTime;
         t += Time.deltaTime;
+        if(life <= 0 )
+        {
+            FinishGame();
+        }
         if(t > spawnTime)
         {
             int randomShapeIndex = Random.Range(0,shapes.Count);
@@ -51,4 +61,12 @@ public class GameManager : MonoBehaviour
         doors[1].SetActive(square > 0);
         doors[2].SetActive(triangle > 0);
     }
+
+    public void FinishGame()
+    {
+        GameManager.Instance.isGameEnded = true;
+        canva.GetComponent<UIManager>().FinishGame();
+
+    }
+
 }
