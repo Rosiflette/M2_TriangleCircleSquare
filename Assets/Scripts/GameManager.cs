@@ -66,7 +66,11 @@ public class GameManager : MonoBehaviour
     {
         GameManager.Instance.isGameEnded = true;
         canva.GetComponent<UIManager>().FinishGame();
-
     }
 
+    public void Restart()
+    {
+        life = 3;
+        isGameEnded = false;
+    }
 }
